@@ -10,7 +10,7 @@ return decoded;
 }
 function refresh(){
 document.getElementById("link").href = "https://scratch.mit.edu/projects/" + document.getElementById("server").value;
-fetch("https://cors-everywhere.herokuapp.com/clouddata.scratch.mit.edu/logs?projectid=" + document.getElementById("server").value + "&limit=15&offset=0").then(function (r){return r.json}).then(function (j){
+fetch("https://cors-everywhere.herokuapp.com/clouddata.scratch.mit.edu/logs?projectid=" + document.getElementById("server").value + "&limit=15&offset=0").then(function (r){return r.json()}).then(function (j){
 console.log("Fetched: " + j);
   var dataHTML = "";
 for(var x = 0;x < j.length;x++){
