@@ -16,7 +16,9 @@ console.log("Fetched: " + j);
 for(var x = 0;x < j.length;x++){
 var user = decode(j[x].value).split("|")[0];
 var text = decode(j[x].value).split("|")[1];
-dataHTML += "<p><a href='https://scratch.mit.edu/users/" + user + "'>" + user + "</a>: " + text + "</p>";
+var date = new Date(j[x].timestamp);
+var datestring = timeago().format(date);
+dataHTML += "<p><a href='https://scratch.mit.edu/users/" + user + "'>" + user + "</a>: " + text + " <i style='color:#ddd'>" + datestring + "</i></p>";
   console.log(user + ": " + text);
 };
 document.getElementById("data").innerHTML = dataHTML;
