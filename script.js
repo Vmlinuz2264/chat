@@ -10,16 +10,9 @@ return decoded;
 }
 function refresh(){
 document.getElementById("link").href = "https://scratch.mit.edu/projects/" + document.getElementById("server").value;
-// with fetch
-fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://clouddata.scratch.mit.edu/logs?projectid=807628538&limit=100&offset=0')}`)
-.then(response => {
-	if (response.ok) return r.json()
-	throw new Error('Network response was not ok.')
-})
-.then(data => console.log(data.contents));
-.then(function (r){return r.json()}).then(function (j){
+fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://clouddata.scratch.mit.edu/logs?projectid=807628538&limit=100&offset=0')}`).then(function (r){return r.json()}).then(function (j){
 console.log("Fetched: " + j);
-var dataHTML = "";
+  var dataHTML = "";
 for(var x = 0;x < j.length;x++){
 var user = decode(j[x].value).split("|")[0];
 var text = decode(j[x].value).split("|")[1];
