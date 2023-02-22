@@ -1,13 +1,70 @@
-<!DOCTYPE html><html>
-<head><title>Get Data from Scratch</title><style>body, html {font-family: Arial} span {color: #ff5500;cursor:help} a {color:#ee8800}</style></head>
-<body>
-<h1>Get Data from Scratch</h1>
-<p>Visit <a href="https://scratch.mit.edu/projects/195509749/" target="_blank" id="link">this project</a> to try it out! <span title="You must be a Scratcher to use this.">Help?</span></p>
-<p>Server: <input type="text" value="807628538" id="server"> <span title="If you remix this project, you can enter the project ID of the project instead.">Help?</span></p>
-<p id="refresh">Refreshed at: </p>
-<h3>Data:</h3>
-<div id="data"></div>
-<script src="./script.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Get Data from Scratch</title>
+  <style>
+    body, html {
+      font-family: Arial;
+    }
+    span {
+      color: #ff5500;
+      cursor: help;
+    }
+    a {
+      color: #ee8800;
+    }
+  </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/timeago.js/3.0.2/timeago.min.js"></script>
+</head>
+<body>
+  <h1>Get Data from Scratch</h1>
+  <p>Visit <a href="https://scratch.mit.edu/projects/195509749/" target="_blank" id="link">this project</a> to try it out! <span title="You must be a Scratcher to use this.">Help?</span></p>
+  <p>Server: <input type="text" value="807628538" id="server"> <span title="If you remix this project, you can enter the project ID of the project instead.">Help?</span></p>
+  <p id="refresh">Refreshed at: </p>
+  <h3>Data:</h3>
+  <div id="data"></div>
+
+  <script>
+    function decode(text) {
+      let decoded = '';
+      const chars = '1234567890qwertyuiopasdfghjklzxcvbnm .,?!)(:;-_|';
+      for (let i = 0; i < text.length; i += 2) {
+        const nums = parseFloat(text.charAt(i) + text.charAt(i + 1));
+        decoded += chars.charAt(nums - 1);
+      }
+      console.log(`Decoded: ${decoded}`);
+      return decoded;
+    }
+
+    function refresh() {
+      const serverId = document.getElementById('server').value;
+      const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://clouddata.scratch.mit.edu/logs?projectid=${serverId}&limit=100&offset=0`)}`;
+      
+      fetch(url).then((r) => r.json()).then((j) => {
+        console.log(`Fetched: ${j.contents}`);
+        let dataHTML = '';
+        for (let x = 0; x < j.contents.length; x++) {
+          const user = decode(j.contents[x].value).split('|')[0];
+          const text = decode(j.contents[x].value).split('|')[1];
+          const date = new Date(j.contents[x].timestamp);
+          const datestring = timeago().format(date);
+          dataHTML += `<p><a href='https://scratch.mit.edu/users/${user}'>${user}</a>: ${text} <i style='color:#ddd'>${datestring}</i></p>`;
+          console.log(`${user}: ${text}`);
+        }
+        document.getElementById('data').innerHTML = dataHTML;
+        console.log(dataHTML);
+        const d = new Date();
+        document.getElementById('refresh').innerHTML = `Refreshed at: ${d.toTimeString()}`;
+        console.log(`Refreshed at: ${d.toTimeString()}`);
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+
+    window.addEventListener('load', () => {
+      refresh();
+      setInterval(refresh, 10000);
+    });
+  </script>
 </body>
 </html>
