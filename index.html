@@ -36,30 +36,39 @@
       return decoded;
     }
 
-    function refresh() {
-      const serverId = document.getElementById('server').value;
-      const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://clouddata.scratch.mit.edu/logs?projectid=${serverId}&limit=100&offset=0`)}`;
-      
-      fetch(url).then((r) => r.json()).then((j) => {
-        console.log(`Fetched: ${j.contents}`);
-        let dataHTML = '';
-        for (let x = 0; x < j.contents.length; x++) {
-          const user = decode(j.contents[x].value).split('|')[0];
-          const text = decode(j.contents[x].value).split('|')[1];
-          const date = new Date(j.contents[x].timestamp);
-          const datestring = timeago().format(date);
-          dataHTML += `<p><a href='https://scratch.mit.edu/users/${user}'>${user}</a>: ${text} <i style='color:#ddd'>${datestring}</i></p>`;
-          console.log(`${user}: ${text}`);
-        }
-        document.getElementById('data').innerHTML = dataHTML;
-        console.log(dataHTML);
-        const d = new Date();
-        document.getElementById('refresh').innerHTML = `Refreshed at: ${d.toTimeString()}`;
-        console.log(`Refreshed at: ${d.toTimeString()}`);
-      }).catch((error) => {
-        console.log(error);
-      });
-    }
+   function refresh() {
+  const serverId = document.getElementById('server').value;
+  const url = `https://api.allorigins.win/get?url=${encodeURIComponent(`https://clouddata.scratch.mit.edu/logs?projectid=${serverId}&limit=100&offset=0`)}`;
+
+  fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then((j) => {
+      console.log(`Fetched: ${j.contents}`);
+      let dataHTML = '';
+      for (let x = 0; x < j.contents.length; x++) {
+        const user = decode(j.contents[x].value).split('|')[0];
+        const text = decode(j.contents[x].value).split('|')[1];
+        const date = new Date(j.contents[x].timestamp);
+        const datestring = timeago().format(date);
+        dataHTML += `<p><a href='https://scratch.mit.edu/users/${user}'>${user}</a>: ${text} <i style='color:#ddd'>${datestring}</i></p>`;
+        console.log(`${user}: ${text}`);
+      }
+      document.getElementById('data').innerHTML = dataHTML;
+      console.log(dataHTML);
+      const d = new Date();
+      document.getElementById('refresh').innerHTML = `Refreshed at: ${d.toTimeString()}`;
+      console.log(`Refreshed at: ${d.toTimeString()}`);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
 
     window.addEventListener('load', () => {
       refresh();
