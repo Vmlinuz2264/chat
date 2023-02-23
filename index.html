@@ -43,10 +43,10 @@
       fetch(url).then((r) => r.json()).then((j) => {
         console.log(`Fetched: ${j.contents}`);
         let dataHTML = '';
-        for (let x = 0; x < j.contents.data.length; x++) {
-          const user = decode(j.contents.data[x].value).split('|')[0];
-          const text = decode(j.contents.data[x].value).split('|')[1];
-          const date = new Date(j.contents.data[x].timestamp);
+        for (let x = 0; x < j.contents.length; x++) {
+          const user = decode(j.contents[x].value).split('|')[0];
+          const text = decode(j.contents[x].value).split('|')[1];
+          const date = new Date(j.contents[x].timestamp);
           const datestring = timeago().format(date);
           dataHTML += `<p><a href='https://scratch.mit.edu/users/${user}'>${user}</a>: ${text} <i style='color:#ddd'>${datestring}</i></p>`;
           console.log(`${user}: ${text}`);
@@ -54,4 +54,17 @@
         document.getElementById('data').innerHTML = dataHTML;
         console.log(dataHTML);
         const d = new Date();
-        document.getElementById('refresh').innerHTML
+        document.getElementById('refresh').innerHTML = `Refreshed at: ${d.toTimeString()}`;
+        console.log(`Refreshed at: ${d.toTimeString()}`);
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+
+    window.addEventListener('load', () => {
+      refresh();
+      setInterval(refresh, 10000);
+    });
+  </script>
+</body>
+</html>
