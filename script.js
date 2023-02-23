@@ -1,40 +1,38 @@
-function decode(text) {
-  let decoded = '';
-  const chars = '1234567890qwertyuiopasdfghjklzxcvbnm .,?!)(:;-_|';
-  for (let i = 0; i < text.length; i += 2) {
-    const nums = parseFloat(text.charAt(i) + text.charAt(i + 1));
+function decode(text){
+  var decoded = "";
+  var chars = "1234567890qwertyuiopasdfghjklzxcvbnm .,?!)(:;-_|";
+  for(var i = 0;i < text.length;i = i + 2){
+    var nums = parseFloat(text.charAt(i) + text.charAt(i + 1));
     decoded += chars.charAt(nums - 1);
   }
-  console.log(`Decoded: ${decoded}`);
-  const splitString = decoded.split('|');
-  if (splitString.length === 2) {
-    return splitString;
-  } else {
-    return ['', ''];
-  }
+  console.log("Decoded: " + decoded);
+  return decoded;
 }
 
-function refresh () {
-  document.getElementById('link').href = `https://scratch.mit.edu/projects/${document.getElementById('server').value}`
-  fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://clouddata.scratch.mit.edu/logs?projectid=807628538&limit=100&offset=0')}`).then((r) => r.json()).then((j) => {
-    console.log(`Fetched: ${j}`)
-    let dataHTML = ''
-    for (let x = 0; x < j.length; x++) {
-      const user = decode(j[x].value)[0];
-      const text = decode(j[x].value)[1];
-      const date = new Date(j[x].timestamp);
-      const datestring = timeago().format(date);
-      dataHTML += `<p><a href='https://scratch.mit.edu/users/${user}'>${user}</a>: ${text} <i style='color:#ddd'>${datestring}</i></p>`;
-      console.log(`${user}: ${text}`);
-    }
-    document.getElementById('data').innerHTML = dataHTML;
-    console.log(dataHTML);
-    const d = new Date();
-    document.getElementById('refresh').innerHTML = `Refreshed at: ${d.toTimeString()}`;
-    console.log(`Refreshed at: ${d.toTimeString()}`);
-  });
+function refresh(){
+  document.getElementById("link").href = "https://scratch.mit.edu/projects/" + document.getElementById("server").value;
+  fetch("https://api.allorigins.win/raw?url=https://clouddata.scratch.mit.edu/logs?projectid=" + document.getElementById("server").value + "&limit=40&offset=0")
+    .then(function (r){return r.json()})
+    .then(function (j){
+      console.log("Fetched: " + j);
+      var dataHTML = "";
+      for(var x = 0;x < j.length;x++){
+        var user = decode(j[x].value).split("|")[0];
+        var text = decode(j[x].value).split("|")[1];
+        var date = new Date(j[x].timestamp);
+        var datestring = timeago().format(date);
+        dataHTML += "<p><a href='https://scratch.mit.edu/users/" + user + "'>" + user + "</a>: " + text + " <i style='color:#ddd'>" + datestring + "</i></p>";
+        console.log(user + ": " + text);
+      };
+      document.getElementById("data").innerHTML = dataHTML;
+      console.log(dataHTML);
+      var d = new Date();
+      document.getElementById("refresh").innerHTML = "Refreshed at: " + d.toTimeString();
+      console.log("Refreshed at: " + d.toTimeString());
+    })
+    .catch(function(err) {
+      console.log('Fetch Error :-S', err);
+    });
 }
-window.addEventListener('load', () => {
-  refresh();
-  setInterval(refresh, 10000);
-});
+
+window.addEventListener("load",function (){refresh();setInterval(refresh,10000)})
