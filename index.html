@@ -25,13 +25,23 @@
   <div id="data"></div>
 
   <script>
-    function decode(text) {
-      let decoded = '';
-      const chars = '1234567890qwertyuiopasdfghjklzxcvbnm .,?!)(:;-_|';
-      for (let i = 0; i < text.length; i += 2) {
-        const nums = parseFloat(text.charAt(i) + text.charAt(i + 1));
-        decoded += chars.charAt(nums - 1);
-      }
+   function decode(text) {
+  let decoded = '';
+  const chars = '1234567890qwertyuiopasdfghjklzxcvbnm .,?!)(:;-_|';
+
+  // add padding if necessary
+  if (text.length % 2 === 1) {
+    text += ' ';
+  }
+
+  for (let i = 0; i < text.length; i += 2) {
+    const nums = parseFloat(text.charAt(i) + text.charAt(i + 1));
+    decoded += chars.charAt(nums - 1);
+  }
+  console.log(`Decoded: ${decoded}`);
+  return decoded;
+}
+
       console.log(`Decoded: ${decoded}`);
       return decoded;
     }
